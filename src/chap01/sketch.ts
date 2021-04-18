@@ -1,4 +1,4 @@
-import p5, { Graphics, Vector } from "p5";
+import p5, { Graphics, Image, Vector } from "p5";
 import { Arrow } from "./Arrow";
 
 export const sketch = (p: p5) => {
@@ -9,9 +9,8 @@ export const sketch = (p: p5) => {
     let reverse = false;
     let arrowThickness = 1;
     const FRAME_RATE = 60;
-    const TIME_IN_FLIGHT = 3 * FRAME_RATE;
-    const NUM_OF_ARROWS = 100;
-    const SPREAD = NUM_OF_ARROWS * 5;
+    const TIME_IN_FLIGHT = 2 * FRAME_RATE;
+    const NUM_OF_ARROWS = 120;
 
     p.setup = () => {
         let dim = p.windowHeight - (p.windowHeight % 10);
@@ -19,7 +18,7 @@ export const sketch = (p: p5) => {
         p.createCanvas(dim, dim);
         p.background(255);
 
-        arrows = initArrows();
+        initArrows();
         bloodGraphics = p.createGraphics(p.width, p.height);
         inkArray = new Array();
         maxSize = new Array();
@@ -40,7 +39,7 @@ export const sketch = (p: p5) => {
         arrows
             .filter((arrow) => !arrow.isStopped)
             .forEach((arrow) => {
-                arrow.update();
+                arrow.update(p);
                 arrow.checkEdges();
                 if (arrow.isStopped) {
                     inkArray.push(p.createVector(p.random(0, p.width), 0));
@@ -53,7 +52,7 @@ export const sketch = (p: p5) => {
             reverse = !reverse;
             arrowThickness += 1;
             if (arrowThickness == 4) arrowThickness = 1;
-            arrows = initArrows();
+            initArrows();
         }
     };
 
@@ -78,16 +77,13 @@ export const sketch = (p: p5) => {
         maxSize = maxSize.filter((_, i) => !indicesToDelete.includes(i));
     }
 
-    function initArrows(): Arrow[] {
-        let arrows: Arrow[] = new Array(NUM_OF_ARROWS);
-        arrows[0] = new Arrow(p, TIME_IN_FLIGHT, SPREAD, arrowThickness);
+    function initArrows() {
+        arrows = new Array(NUM_OF_ARROWS);
+        arrows[0] = new Arrow(p, TIME_IN_FLIGHT, arrowThickness);
         for (let i = 1; i < NUM_OF_ARROWS; i++) {
-            let theta = p.random(90, 360);
-            let r = p.random(0, SPREAD);
-            let x = r * Math.cos(p.radians(theta));
-            let y = r * Math.sin(p.radians(theta));
-            arrows[i] = new Arrow(p, TIME_IN_FLIGHT, SPREAD, arrowThickness, p.createVector(x, y));
+            let initialLocation = p.createVector(p.random(-300, 200), 0);
+            let framesDelay = p.random(0, 90);
+            arrows[i] = new Arrow(p, TIME_IN_FLIGHT, arrowThickness, framesDelay, initialLocation);
         }
-        return arrows;
     }
 };
