@@ -1,14 +1,15 @@
-import p5, { Vector } from "p5";
+import p5, { Graphics, Vector } from "p5";
 import { Planet } from "./Planet";
 import { Star } from "./Star";
 
 export const sketch = (p: p5) => {
     const FRAME_RATE = 60;
     const NUMBER_OF_PLANETS = 5;
-    const NUMBER_OF_STARS = 100;
+    const NUMBER_OF_STARS = 500;
     let planets: Planet[] = [];
     let stars: Star[] = [];
     let bounds: Vector[] = [p.createVector(1, 0), p.createVector(0, 1), p.createVector(-1, 0), p.createVector(0, -1)];
+    let starsGraphics: Graphics;
 
     p.setup = () => {
         let dim = p.windowHeight - (p.windowHeight % 10);
@@ -25,6 +26,7 @@ export const sketch = (p: p5) => {
             planets[i] = new Planet(p, focalPoint.x, focalPoint.y);
         }
 
+        starsGraphics = p.createGraphics(p.width, p.height);
         for (let i = 0; i < NUMBER_OF_STARS; i++) {
             stars[i] = new Star(p);
         }
@@ -37,9 +39,11 @@ export const sketch = (p: p5) => {
         p.directionalLight(128, 128, 128, 1, 0, -1);
         p.directionalLight(128, 128, 128, 0, 1, -1);
 
+        starsGraphics.background(0);
         for (let i = 0; i < stars.length; i++) {
-            stars[i].draw(p);
+            stars[i].draw(starsGraphics);
         }
+        p.image(starsGraphics, 0, 0);
 
         for (let i = 0; i < planets.length; i++) {
             for (let j = 0; j < planets.length; j++) {
