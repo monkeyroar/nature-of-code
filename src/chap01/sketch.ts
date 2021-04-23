@@ -1,4 +1,4 @@
-import p5, { Graphics, Image, Vector } from "p5";
+import p5, { Graphics, Vector } from "p5";
 import { Arrow } from "./Arrow";
 
 export const sketch = (p: p5) => {
